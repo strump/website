@@ -2,36 +2,47 @@
 {% if lang != config.default_language %}
   {% set langPathPrefix = '/' ~ lang %}
 {% endif %}
-<nav id="menu" role="navigation">
-  <a href="{{ langPathPrefix | safe }}/"><span class="top_menu_logo"></span></a>
-  <span>
-    {% for page in [
-      get_section(path="news/_index.md"),
-      get_page(path="donate/index.md"),
-      get_page(path="contribute/index.md"),
-      get_section(path="faq/_index.md"),
-    ] %}
-    {% set translated = [t for t in page.translations if t.lang == lang] | first %}
-    {% if translated %}
-      {% if "_index" in translated.path %}
-        {% set page = get_section(path=translated.path) %}
-      {% else %}
-        {% set page = get_page(path=translated.path) %}
-      {% endif %}
-    {% endif %}
-    <span class="top_menu_{{ page.path | split(pat="/") | reverse | nth(n=1) }} top_menu_item{% if page.path != resource_path %}">
-      <a href="{{ page.permalink | replace(from=config.base_url, to="") | safe }}">{% else %}_active">{% endif %}
-        <span>{{ page.extra.menu_title }}</span>
-        {%- if page.path != resource_path %}</a>{% endif %}
-    </span>
-    •
-    {% endfor %}
-    <span class="top_menu_item">
-      <a href="https://github.com/organicmaps/organicmaps" target="_blank" class="top_menu_github">
-        <span>GitHub</span>
-      </a>
-    </span>
-    {% include 'language_selector.html' %}
-  </span>
 
+<nav id="menu" role="navigation" aria-label="Main navigation">
+  <div class="menu-container">
+    <!-- Logo -->
+    <a href="{{ langPathPrefix | safe }}/"><span class="top_menu_logo"></span></a>
+    
+    <!-- Mobile menu button -->
+    <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+    
+    <!-- Main menu -->
+    <div id="main-menu" class="main-menu">
+      {% for page in [
+        get_section(path="news/_index.md"),
+        get_page(path="donate/index.md"),
+        get_page(path="contribute/index.md"),
+        get_section(path="faq/_index.md"),
+      ] %}
+      {% set translated = [t for t in page.translations if t.lang == lang] | first %}
+      {% if translated %}
+        {% if "_index" in translated.path %}
+          {% set page = get_section(path=translated.path) %}
+        {% else %}
+          {% set page = get_page(path=translated.path) %}
+        {% endif %}
+      {% endif %}
+      <span class="top_menu_{{ page.path | split(pat="/") | reverse | nth(n=1) }} top_menu_item{% if page.path != resource_path %}">
+        <a href="{{ page.permalink | replace(from=config.base_url, to="") | safe }}">{% else %}_active">{% endif %}
+          <span>{{ page.extra.menu_title }}</span>
+          {%- if page.path != resource_path %}</a>{% endif %}
+      </span>
+      {% endfor %}
+      <span class="top_menu_item">
+        <a href="https://github.com/organicmaps/organicmaps" target="_blank" rel="noopener noreferrer" class="top_menu_github">
+          <span>GitHub</span>
+        </a>
+      </span>
+      {% include 'language_selector.html' %}
+    </div>
+  </div>
 </nav>

@@ -23,7 +23,7 @@
 
 {#- Build a descriptive page_title for <title>, og:title, twitter:title.
     Taxonomy term pages (e.g. /faq/app/, /news/releases/) get
-    "{Term} – {Section label} – {Brand}" so the title is unique and
+    "{Term}  {Section label}  {Brand}" so the title is unique and
     branded; everything else uses the resource's own title verbatim.
     On non-default-language pages, an ASCII-only term is usually an
     untranslated English label, so omit it rather than mix languages.
@@ -53,9 +53,9 @@
   {%- if section_label -%}
     {%- set brand = config.title | default(value="Organic Maps", boolean=true) -%}
     {%- if use_term_name -%}
-      {%- set page_title = term_name ~ " – " ~ section_label ~ " – " ~ brand -%}
+      {%- set page_title = term_name ~ "  " ~ section_label ~ "  " ~ brand -%}
     {%- else -%}
-      {%- set page_title = section_label ~ " – " ~ brand -%}
+      {%- set page_title = section_label ~ "  " ~ brand -%}
     {%- endif -%}
   {%- endif -%}
 {%- endif -%}
@@ -67,7 +67,11 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, minimum-scale=1.0">
+  <meta name="theme-color" content="#2e7d32">
+  
+  <!-- Preload critical resources -->
+  <link rel="preload" href="{{ get_url(path="main.css", cachebust=true) | replace(from=config.base_url, to="") | safe }}" as="style">
 
   {% block meta_description -%}
   {%- if term_description -%}
@@ -80,7 +84,6 @@
   {%- if description -%}
   <meta name="description" content="{{ description }}">
   {% endif -%}
-
   {%- endblock -%}
 
   {% block rss -%}
@@ -96,7 +99,7 @@
       .translations field, and inferring equivalents from the term's
       pages produces inconsistent clusters when content uses mixed
       slugs across languages (e.g. Hebrew posts tagged both
-      "releases" and "גרסאות"), which Google may discard entirely. -#}
+      "releases" and "ded"), which Google may discard entirely. -#}
   {%- if translations | length > 0 %}
   <link rel="alternate" hreflang="{{ lang }}" href="{{ current_url | safe }}">
   {%- for t in translations %}
@@ -201,13 +204,43 @@
 
     {% include 'bottom_menu.html' %}
     <p>
-      <span data-nosnippet>© 2026 Organic Maps OÜ, reg. code 16225385</span>
-      <span data-nosnippet>Harju maakond, Tallinn, Lasnamäe linnaosa, Tähesaju tee 21-114, 13917, Estonia</span>
+      <span data-nosnippet> a9 2026 Organic Maps O c, reg. code 16225385</span>
+      <span data-nosnippet>Harju maakond, Tallinn, Lasnam e linnaosa, T hesaju tee 21-114, 13917, Estonia</span>
       <span data-nosnippet>VAT EE102389234</span>
       <span data-nosnippet><a href="mailto:hello@organicmaps.app">hello@organicmaps.app</a></span>
     </p>
   </footer>
 
+  <!-- Minimal inline JavaScript for mobile menu -->
+  <script>
+    (function() {
+      'use strict';
+      
+      // Mobile menu toggle
+      var menuToggle = document.querySelector('.mobile-menu-toggle');
+      var mainMenu = document.querySelector('.main-menu');
+      
+      if (menuToggle && mainMenu) {
+        menuToggle.addEventListener('click', function() {
+          var isExpanded = this.getAttribute('aria-expanded') === 'true';
+          this.setAttribute('aria-expanded', !isExpanded);
+          mainMenu.classList.toggle('mobile-menu-open');
+        });
+      }
+      
+      // Close mobile menu when clicking outside
+      document.addEventListener('click', function(event) {
+        if (!menuToggle || !mainMenu) return;
+        
+        if (!mainMenu.contains(event.target) && !menuToggle.contains(event.target)) {
+          menuToggle.setAttribute('aria-expanded', 'false');
+          mainMenu.classList.remove('mobile-menu-open');
+        }
+      });
+    })();
+  </script>
+
+  {% include 'google_native_app_prompt.html' %}
 </body>
 
 </html>
