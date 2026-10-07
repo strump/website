@@ -513,6 +513,12 @@ img[alt="logo"] {
 // Donate Buttons
 // ============================================
 .donate_buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  align-items: center;
+  
   form,
   input {
     display: inline;
@@ -528,6 +534,7 @@ img[alt="logo"] {
     border-radius: var(--border-radius-md);
     box-shadow: var(--shadow-sm);
     transition: transform var(--transition-fast);
+    flex-shrink: 0;
   }
 
   img:hover,
